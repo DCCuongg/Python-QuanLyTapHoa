@@ -38,8 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'QuanLyBanHang',
+    'rest_framework',
+
     'QuanLyHangHoa',
+    'QuanLyHoaDon',
     'QuanLyNhanSu',
 ]
 MIDDLEWARE = [
@@ -80,7 +82,7 @@ DATABASES = {
         'NAME': 'QuanLyTapHoa',          # đúng tên DB
         'USER': 'PyodbcUser',            # LOGIN SQL Server
         'PASSWORD': '23520195',          # mật khẩu login
-        'HOST': 'localhost',             # server
+        'HOST': 'ADMIN',             # server
         'PORT': '1433',
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
@@ -113,7 +115,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Ho_Chi_Minh'
 
 USE_I18N = True
 
@@ -124,3 +126,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Không bắt buộc, nhưng chuẩn backend API thì nên thêm:
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+}
