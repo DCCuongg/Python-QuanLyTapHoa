@@ -3,11 +3,19 @@ from django.db import models
 # Models cho bảng DONVITINH
 # =========================
 class DonViTinh(models.Model):
-    ma_dvt = models.AutoField(primary_key=True)  # tương đương INT IDENTITY(1,1)
-    ten_dvt = models.CharField(max_length=50, null=False)
+    ma_dvt = models.AutoField(
+        primary_key=True,
+        db_column='MaDVT'
+    )
+
+    ten_dvt = models.CharField(
+        max_length=50,
+        db_column='TenDVT'
+    )
 
     class Meta:
-        db_table = 'DON_VI_TINH'  # giữ tên bảng giống SQL Server
+        db_table = 'DON_VI_TINH'
+        managed = False  # ⚠️ Bắt buộc khi dùng DB restore sẵn
 
     def __str__(self):
         return self.ten_dvt

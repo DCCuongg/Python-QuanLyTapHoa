@@ -2,17 +2,26 @@ from django.db import models
 from .thuong_hieu import ThuongHieu
 from .loai_hang import LoaiHang
 from .don_vi_tinh import DonViTinh
-
+from typing import List, Optional
+from django.db.models import QuerySet
 # =========================
 # Models cho bảng HANGHOA
 # =========================
 class HangHoa(models.Model):
-    ma_hang = models.AutoField(primary_key=True)
-    ten_hang = models.CharField(max_length=150, null=False)
+    ma_hang = models.AutoField(
+        primary_key=True,
+        db_column='MaHang'
+    )
+
+    ten_hang = models.CharField(
+        max_length=150,
+        null=False,
+        db_column='TenHang'
+    )
 
     ma_thuong_hieu = models.ForeignKey(
-        'ThuongHieu',  # model đã tạo trước
-        on_delete=models.SET_NULL,  # khi thương hiệu bị xóa, giữ sản phẩm với giá trị NULL
+        'ThuongHieu',
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
         db_column='MaThuongHieu',
@@ -20,8 +29,8 @@ class HangHoa(models.Model):
     )
 
     ma_loai_hang = models.ForeignKey(
-        'LoaiHang',  # giả sử bạn đã có model LoaiHang
-        on_delete=models.PROTECT,  # không cho xóa loại hàng nếu còn hàng tồn
+        'LoaiHang',
+        on_delete=models.PROTECT,
         db_column='MaLoaiHang',
         related_name='hang_hoas'
     )
@@ -33,22 +42,36 @@ class HangHoa(models.Model):
         related_name='hang_hoas'
     )
 
-    gia_nhap = models.DecimalField(max_digits=18, decimal_places=2)
-    gia_ban = models.DecimalField(max_digits=18, decimal_places=2)
-    so_luong_ton = models.IntegerField()
+    gia_nhap = models.DecimalField(
+        max_digits=18,
+        decimal_places=2,
+        db_column='GiaNhap'
+    )
+
+    gia_ban = models.DecimalField(
+        max_digits=18,
+        decimal_places=2,
+        db_column='GiaBan'
+    )
+
+    so_luong_ton = models.IntegerField(
+        db_column='SoLuongTon'
+    )
 
     class Meta:
         db_table = 'HANG_HOA'
+        managed = False   # 🔥 BẮT BUỘC khi dùng DB có sẵn
 
     def __str__(self):
         return self.ten_hang
 
-from typing import List, Optional
+##############################################HangHoaRepository
 class HangHoaRepository:
 
     @staticmethod
-    def get_all() -> List[HangHoa]:
-        return list(HangHoa.objects.all())
+    def get_all() -> QuerySet[HangHoa]:
+        """Tạm thời chính sách trả về Queryset, muốn xử lý logic python phải ép kiểu bằng list"""
+        return HangHoa.objects.all()
 
     @staticmethod
     def get_by_id(ma_hang: int) -> Optional[HangHoa]:

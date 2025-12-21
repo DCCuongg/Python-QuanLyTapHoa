@@ -4,16 +4,37 @@ from django.db import models
 # Models cho bảng THUONGHIEU
 # =========================
 class ThuongHieu(models.Model):
-    ma_thuong_hieu = models.AutoField(primary_key=True)  # tương đương INT IDENTITY(1,1)
-    ten_thuong_hieu = models.CharField(max_length=100, null=False)
-    quoc_gia = models.CharField(max_length=100, null=True, blank=True)
-    mo_ta = models.CharField(max_length=255, null=True, blank=True)
+    ma_thuong_hieu = models.AutoField(
+        primary_key=True,
+        db_column='MaThuongHieu'
+    )
+
+    ten_thuong_hieu = models.CharField(
+        max_length=100,
+        db_column='TenThuongHieu'
+    )
+
+    quoc_gia = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True,
+        db_column='QuocGia'
+    )
+
+    mo_ta = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        db_column='MoTa'
+    )
 
     class Meta:
-        db_table = 'THUONG_HIEU'  # giữ tên bảng giống SQL Server
+        db_table = 'THUONG_HIEU'
+        managed = False  # ⚠️ Bắt buộc khi dùng DB có sẵn
 
     def __str__(self):
         return self.ten_thuong_hieu
+
 
 # =========================
 from typing import List, Optional

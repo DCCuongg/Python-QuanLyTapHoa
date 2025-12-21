@@ -4,12 +4,26 @@ from django.db import models
 # Models cho bảng LOAIHANG
 # =========================
 class LoaiHang(models.Model):
-    ma_loai = models.AutoField(primary_key=True, db_column="MaLoaiHang")
-    ten_loai = models.CharField(max_length=100, db_column="TenLoaiHang")
-    mo_ta = models.CharField(max_length=255, null=True, blank=True, db_column="MoTa")
+    ma_loai = models.AutoField(
+        primary_key=True,
+        db_column="MaLoaiHang"
+    )
+
+    ten_loai = models.CharField(
+        max_length=100,
+        db_column="TenLoaiHang"
+    )
+
+    mo_ta = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        db_column="MoTa"
+    )
 
     class Meta:
         db_table = "LOAI_HANG"
+        managed = False   # 🔥 BẮT BUỘC – đây là thứ bạn thiếu
 
     def __str__(self):
         return self.ten_loai
