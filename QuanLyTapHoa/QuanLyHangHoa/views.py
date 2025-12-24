@@ -25,12 +25,12 @@ def hanghoa_get_by_id(request, ma_hang: int):
     serializer = HangHoaSerializer(obj)
     return Response(serializer.data)
 
-@api_view(['POST'])
+@api_view(["POST"])
 def hanghoa_create(request):
     serializer = HangHoaSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
+    serializer.is_valid(raise_exception=True)  # sai là dừng ở đây
 
-    obj = HangHoaService.create(**serializer.validated_data)
+    obj = HangHoaService.create(**serializer.validated_data)  # dùng data gốc
 
     return Response(
         HangHoaSerializer(obj).data,

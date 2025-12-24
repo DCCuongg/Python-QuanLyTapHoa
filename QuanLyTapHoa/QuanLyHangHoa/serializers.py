@@ -37,27 +37,39 @@ class ThuongHieuSerializer(serializers.ModelSerializer):
 # HangHoa Serializer (LỒNG OBJECT)
 # =========================
 class HangHoaSerializer(serializers.ModelSerializer):
-    # READ: trả object lồng
-    ma_dvt = DonViTinhSerializer(read_only=True)
-    ma_loai_hang = LoaiHangSerializer(read_only=True)
-    ma_thuong_hieu = ThuongHieuSerializer(read_only=True)
-
-    # WRITE: nhận ID
-    ma_dvt_id = serializers.PrimaryKeyRelatedField(
-        queryset=DonViTinh.objects.all(),
+    # =====================
+    # READ: object lồng
+    # =====================
+    don_vi_tinh = DonViTinhSerializer(
         source="ma_dvt",
-        write_only=True
+        read_only=True
     )
 
-    ma_loai_hang_id = serializers.PrimaryKeyRelatedField(
-        queryset=LoaiHang.objects.all(),
+    loai_hang = LoaiHangSerializer(
         source="ma_loai_hang",
+        read_only=True
+    )
+
+    thuong_hieu = ThuongHieuSerializer(
+        source="ma_thuong_hieu",
+        read_only=True
+    )
+
+    # =====================
+    # WRITE: nhận ID
+    # =====================
+    ma_dvt = serializers.PrimaryKeyRelatedField(
+        queryset=DonViTinh.objects.all(),
         write_only=True
     )
 
-    ma_thuong_hieu_id = serializers.PrimaryKeyRelatedField(
+    ma_loai_hang = serializers.PrimaryKeyRelatedField(
+        queryset=LoaiHang.objects.all(),
+        write_only=True
+    )
+
+    ma_thuong_hieu = serializers.PrimaryKeyRelatedField(
         queryset=ThuongHieu.objects.all(),
-        source="ma_thuong_hieu",
         write_only=True,
         allow_null=True,
         required=False
@@ -70,14 +82,14 @@ class HangHoaSerializer(serializers.ModelSerializer):
             "ten_hang",
 
             # READ
+            "don_vi_tinh",
+            "loai_hang",
+            "thuong_hieu",
+
+            # WRITE
             "ma_dvt",
             "ma_loai_hang",
             "ma_thuong_hieu",
-
-            # WRITE
-            "ma_dvt_id",
-            "ma_loai_hang_id",
-            "ma_thuong_hieu_id",
 
             "gia_nhap",
             "gia_ban",
