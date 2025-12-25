@@ -2,6 +2,7 @@
 from django.db import models
 
 class ChiTietHoaDon(models.Model):
+    ma_cthd = models.AutoField(primary_key=True, db_column='MaCTHD')
     hoa_don = models.ForeignKey(
         'HoaDon',
         on_delete=models.CASCADE,
@@ -10,7 +11,7 @@ class ChiTietHoaDon(models.Model):
     )
 
     hang_hoa = models.ForeignKey(
-        'HangHoa',
+        'QuanLyHangHoa.HangHoa',
         on_delete=models.PROTECT,
         db_column='MaHang',
         related_name='chi_tiet_hoa_dons'
@@ -30,7 +31,6 @@ class ChiTietHoaDon(models.Model):
         max_digits=18,
         decimal_places=2,
         db_column='ThanhTien',
-        editable=False
     )
 
     class Meta:
@@ -77,7 +77,8 @@ class ChiTietHoaDonRepository:
             hoa_don_id=ma_hd,
             hang_hoa_id=ma_hang,
             so_luong=so_luong,
-            don_gia=don_gia
+            don_gia=don_gia,
+            thanh_tien=don_gia*so_luong,
         )
         obj.save()
         return obj
@@ -95,9 +96,10 @@ class ChiTietHoaDonRepository:
 
         if so_luong is not None:
             obj.so_luong = so_luong
+            obj.thanh_tien = don_gia * so_luong,
         if don_gia is not None:
             obj.don_gia = don_gia
-
+            obj.thanh_tien = don_gia * so_luong,
         obj.save()
         return obj
 
