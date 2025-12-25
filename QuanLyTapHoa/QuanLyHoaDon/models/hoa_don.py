@@ -12,7 +12,7 @@ class HoaDon(models.Model):
     )
 
     nhan_vien = models.ForeignKey(
-        'NhanVien',              # FK dùng string để tránh circular import
+        'QuanLyNhanSu.NhanVien',              # FK dùng string để tránh circular import
         on_delete=models.PROTECT,
         db_column='MaNV',
         related_name='hoa_dons'
@@ -35,6 +35,8 @@ class HoaDon(models.Model):
 # repositories/hoa_don_repo.py
 from typing import Optional
 from django.db.models import QuerySet
+from django.utils import timezone
+from decimal import Decimal
 
 class HoaDonRepository:
 
@@ -64,7 +66,7 @@ class HoaDonRepository:
         obj = HoaDon(
             nhan_vien_id=ma_nv,
             tong_tien=tong_tien,
-            ngay_lap=ngay_lap
+            ngay_lap=ngay_lap or timezone.now()
         )
         obj.save()
         return obj
@@ -77,7 +79,9 @@ class HoaDonRepository:
 
         for key, value in kwargs.items():
             if hasattr(obj, key):
+                print(value)
                 setattr(obj, key, value)
+
 
         obj.save()
         return obj

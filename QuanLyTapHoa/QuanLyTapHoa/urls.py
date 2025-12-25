@@ -18,4 +18,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('api/', include('QuanLyHangHoa.urls')),
+    path('api/', include('QuanLyHoaDon.urls')),
 ]
