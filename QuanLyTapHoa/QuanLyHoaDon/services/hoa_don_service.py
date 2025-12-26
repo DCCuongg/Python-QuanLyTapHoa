@@ -2,7 +2,7 @@
 from typing import Dict
 from django.db import transaction
 from django.utils import timezone
-from django.db.models import QuerySet  # <-- thêm dòng này
+from django.db.models import QuerySet
 from decimal import Decimal
 
 from QuanLyHoaDon.models.hoa_don import HoaDonRepository
@@ -76,4 +76,5 @@ class HoaDonService:
         """
         Trả về QuerySet, giữ lazy loading để paginate/filter.
         """
+
         return HoaDonRepository.get_all()
