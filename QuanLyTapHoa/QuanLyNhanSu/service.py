@@ -62,8 +62,13 @@ class NhanVienService:
 
     #tìm theo tên
     @staticmethod
-    def find_by_name(keyword: str) -> List[NhanVien]:
-        return NhanVien.objects.filter(ho_ten__icontains=keyword).select_related('ma_chuc_vu')
+    def search(keyword: str):
+        if not keyword or not keyword.strip():
+            return NhanVien.objects.none() 
+
+        return NhanVien.objects.filter(
+        ho_ten__icontains=keyword.strip()
+    )
 
     #tìm theo chức vụ
     @staticmethod

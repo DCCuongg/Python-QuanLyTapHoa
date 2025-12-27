@@ -114,11 +114,18 @@ def nhanvien_delete(request, ma_nv):
 
 @api_view(['GET'])
 def nhanvien_search(request):
-    """GET: Tìm kiếm nhân viên theo tên"""
-    q = request.query_params.get('q', '')
-    queryset = NhanVienService.find_by_name(q)
-    serializer = NhanVienSerializer(queryset, many=True)
+    keyword = request.query_params.get('keyword')
+
+    if not keyword:
+        return Response(
+            {"detail": "Vui lòng cung cấp keyword"},
+            status=400
+        )
+
+    nhan_viens = NhanVienService.search(keyword)
+    serializer = NhanVienSerializer(nhan_viens, many=True)
     return Response(serializer.data)
+
 
 @api_view(['GET'])
 def nhanvien_filter_by_chucvu(request):

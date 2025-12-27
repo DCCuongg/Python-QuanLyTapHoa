@@ -39,6 +39,7 @@ class NhanVien(models.Model):
     class Meta:
         db_table = 'NHAN_VIEN'
         managed = False   # 🔥 DB có sẵn
+        #managed = True
 
     def __str__(self):
         return f"{self.ho_ten} (#{self.ma_nv})"
@@ -78,7 +79,7 @@ class NhanVienRepository:
         )
         obj.save()
         return obj
-
+    '''
     @staticmethod
     def update(ma_nv: int, **kwargs) -> Optional[NhanVien]:
         obj = NhanVienRepository.get_by_id(ma_nv)
@@ -91,6 +92,29 @@ class NhanVienRepository:
 
         obj.save()
         return obj
+    '''
+
+    @staticmethod
+    def update(ma_nv: int, **kwargs) -> Optional[NhanVien]:
+        obj = NhanVienRepository.get_by_id(ma_nv)
+        if not obj:
+            return None
+
+        if 'ho_ten' in kwargs:
+            obj.ho_ten = kwargs['ho_ten']
+
+        if 'ma_chuc_vu' in kwargs:
+            obj.ma_chuc_vu_id = kwargs['ma_chuc_vu'] 
+
+        if 'sdt' in kwargs:
+            obj.sdt = kwargs['sdt']
+
+        if 'dia_chi' in kwargs:
+            obj.dia_chi = kwargs['dia_chi']
+
+        obj.save()
+        return obj
+
 
     @staticmethod
     def delete(ma_nv: int) -> bool:

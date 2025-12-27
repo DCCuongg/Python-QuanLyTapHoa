@@ -39,6 +39,7 @@ class ChucVu(models.Model):
     class Meta:
         db_table = 'CHUC_VU'
         managed = False   # 🔥 DB có sẵn → BẮT BUỘC
+        #managed = True    #Test tạm
 
     def __str__(self):
         return f"{self.ten_chuc_vu} (HS: {self.he_so_luong})"
