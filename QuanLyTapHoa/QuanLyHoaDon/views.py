@@ -40,3 +40,43 @@ def hoa_don_get_all(request):
     qs = HoaDonService.get_all_hoa_don()  # trả về QuerySet → vẫn lazy loading
     serializer = HoaDonSerializer(qs, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def hoa_don_get_by_nhan_vien(request, ma_nv: int):
+    """
+    Lấy danh sách hóa đơn theo mã nhân viên.
+
+    URL ví dụ:
+    GET /api/hoa-don/nhan-vien/1/
+    """
+    qs = HoaDonService.get_hoa_don_by_nhan_vien(ma_nv)
+
+    if not qs.exists():
+        return Response(
+            {"detail": "Nhân viên chưa có hóa đơn nào"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    serializer = HoaDonSerializer(qs, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def doanh_thu_theo_thang(request):
+    nam = request.query_params.get('nam')
+
+    if not nam:
+        return Response(
+            {"error": "Thiếu tham số năm"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    try:
+        nam = int(nam)
+    except ValueError:
+        return Response(
+            {"error": "Năm không hợp lệ"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    data = HoaDonService.doanh_thu_theo_thang(nam)
+    return Response(data)

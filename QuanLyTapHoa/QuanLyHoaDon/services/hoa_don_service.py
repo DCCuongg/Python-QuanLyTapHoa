@@ -24,7 +24,7 @@ class HoaDonService:
         chi_tiet_hoa_dons = validated_data.pop("chi_tiets")
         nhan_vien = validated_data["nhan_vien"]
 
-        # 1️⃣ Kiểm tra tồn kho trước
+        # Kiểm tra tồn kho trước
         for ct in chi_tiet_hoa_dons:
             hang_hoa: HangHoa = ct["hang_hoa"]
             so_luong = ct["so_luong"]
@@ -34,7 +34,7 @@ class HoaDonService:
                     f"Hàng '{hang_hoa.ten_hang}' không đủ tồn kho"
                 )
 
-        # 2️⃣ Tạo hóa đơn
+        # Tạo hóa đơn
         hoa_don = HoaDonRepository.create(
             ma_nv=nhan_vien.ma_nv,
             ngay_lap=timezone.now(),
@@ -43,7 +43,7 @@ class HoaDonService:
 
         tongtien = 0
 
-        # 3️⃣ Tạo chi tiết + trừ kho
+        # Tạo chi tiết + trừ kho
         for ct in chi_tiet_hoa_dons:
             hang_hoa: HangHoa = ct["hang_hoa"]
             so_luong = ct["so_luong"]
@@ -65,7 +65,7 @@ class HoaDonService:
                 don_gia=don_gia
             )
 
-        # 4️⃣ Cập nhật tổng tiền
+        # Cập nhật tổng tiền
         HoaDonRepository.update(hoa_don.ma_hd, **{"tong_tien":Decimal(tongtien)})
 
         return HoaDonRepository.get_by_id(hoa_don.ma_hd)
@@ -78,3 +78,31 @@ class HoaDonService:
         """
 
         return HoaDonRepository.get_all()
+
+    @staticmethod
+    def get_hoa_don_by_nhan_vien(ma_nv: int) -> QuerySet[HoaDon]:
+        """
+        Lấy danh sách hóa đơn theo mã nhân viên.
+        Trả về QuerySet để dễ paginate / filter ở View.
+        """
+        return HoaDonRepository.get_by_nhan_vien(ma_nv)
+
+    @staticmethod
+    def doanh_thu_theo_thang(nam: int):
+        raw_data = HoaDonRepository.thong_ke_doanh_thu_theo_nam(nam)
+
+        # map tháng → doanh thu
+        doanh_thu_map = {
+            item["thang"]: item["tong_doanh_thu"]
+            for item in raw_data
+        }
+
+        # đảm bảo đủ 12 tháng
+        result = []
+        for thang in range(1, 13):
+            result.append({
+                "thang": thang,
+                "tong_doanh_thu": doanh_thu_map.get(thang, Decimal(0))
+            })
+
+        return result

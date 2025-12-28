@@ -135,6 +135,27 @@ def nhanvien_filter_by_chucvu(request):
     serializer = NhanVienSerializer(queryset, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def thong_ke_ban_hang_nhan_vien(request):
+    data = NhanVienService.thong_ke_ban_hang()
+    return Response(data)
+
+@api_view(['GET'])
+def tinh_luong_nhan_vien(request, ma_nv: int):
+    try:
+        data = NhanVienService.tinh_luong_nhan_vien(ma_nv)
+        return Response(data, status=status.HTTP_200_OK)
+    except ValueError as e:
+        return Response(
+            {"message": str(e)},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+@api_view(['GET'])
+def tinh_luong_tat_ca(request):
+    data = NhanVienService.tinh_luong_tat_ca()
+    return Response(data, status=status.HTTP_200_OK)
 
 # ViewSet cho NhanVien
 class NhanVienViewSet(viewsets.ViewSet):
@@ -205,3 +226,4 @@ class NhanVienViewSet(viewsets.ViewSet):
         queryset = NhanVienService.filter_by_chuc_vu(int(chucvu_id))
         serializer = NhanVienSerializer(queryset, many=True)
         return Response(serializer.data)
+

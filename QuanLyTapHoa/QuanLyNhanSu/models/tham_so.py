@@ -51,6 +51,11 @@ from typing import Optional
 from django.db.models import QuerySet
 
 class ThamSoLuongRepository:
+    @staticmethod
+    def get_luong_co_ban_hien_tai() -> Optional[ThamSoLuong]:
+        return ThamSoLuong.objects.filter(
+            ten_tham_so='LuongCoBan'
+        ).order_by('-ngay_hieu_luc').first()
 
     @staticmethod
     def get_all() -> QuerySet[ThamSoLuong]:
