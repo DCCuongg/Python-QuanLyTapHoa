@@ -1,5 +1,7 @@
 # models/hoa_don.py
 from django.db import models
+from django.db.models import Count, Sum
+from django.db.models.functions import ExtractMonth
 
 class HoaDon(models.Model):
     ma_hd = models.AutoField(
@@ -93,3 +95,35 @@ class HoaDonRepository:
             return False
         obj.delete()
         return True
+
+    @staticmethod
+    def thong_ke_theo_nhan_vien():
+        """
+        Trả về thống kê số hóa đơn và tổng tiền theo nhân viên
+        """
+        return (
+            HoaDon.objects
+            .values(
+                'nhan_vien_id',
+                'nhan_vien__ho_ten'
+            )
+            .annotate(
+                so_hoa_don=Count('ma_hd'),
+                tong_doanh_thu=Sum('tong_tien')
+            )
+            .order_by('nhan_vien_id')
+        )
+
+    @staticmethod
+    def thong_ke_doanh_thu_theo_nam(nam: int):
+        """
+        Trả về doanh thu theo từng tháng trong năm
+        """
+        return (
+            HoaDon.objects
+            .filter(ngay_lap__year=nam)
+            .annotate(thang=ExtractMonth('ngay_lap'))
+            .values('thang')
+            .annotate(tong_doanh_thu=Sum('tong_tien'))
+            .order_by('thang')
+        )

@@ -1,7 +1,10 @@
 ﻿from typing import Optional, List
 from QuanLyNhanSu.models.chuc_vu import ChucVuRepository,ChucVu  
 from QuanLyNhanSu.models.nhan_vien import NhanVienRepository, NhanVien
-
+from decimal import Decimal
+from QuanLyHoaDon.models.hoa_don import HoaDonRepository
+from QuanLyNhanSu.models.tham_so import ThamSoLuongRepository
+from QuanLyNhanSu.models.nhan_vien import NhanVienRepository
 # ChucVuService
 class ChucVuService:
 
@@ -74,3 +77,67 @@ class NhanVienService:
     @staticmethod
     def filter_by_chuc_vu(ma_chuc_vu: int) -> List[NhanVien]:
         return NhanVien.objects.filter(ma_chuc_vu_id=ma_chuc_vu).select_related('ma_chuc_vu')
+
+    @staticmethod
+
+    def thong_ke_ban_hang():
+        """
+        Thống kê số hóa đơn và tổng doanh thu của mỗi nhân viên
+        """
+        raw_data = HoaDonRepository.thong_ke_theo_nhan_vien()
+
+        result = []
+        for item in raw_data:
+            result.append({
+                "ma_nv": item["nhan_vien_id"],
+                "ho_ten": item["nhan_vien__ho_ten"],
+                "so_hoa_don": item["so_hoa_don"],
+                "tong_doanh_thu": item["tong_doanh_thu"] or Decimal(0)
+            })
+        return result
+
+    @staticmethod
+    def tinh_luong_nhan_vien(ma_nv: int) -> Decimal:
+        # 1. Lấy nhân viên
+        nv = NhanVienRepository.get_by_id(ma_nv)
+        if not nv:
+            raise ValueError("Nhân viên không tồn tại")
+
+        # 2. Lấy lương cơ bản
+        tham_so = ThamSoLuongRepository.get_luong_co_ban_hien_tai()
+        if not tham_so or not tham_so.gia_tri_so:
+            raise ValueError("Chưa cấu hình lương cơ bản")
+
+        luong_co_ban = Decimal(tham_so.gia_tri_so)
+
+        # 3. Lấy chức vụ
+        chuc_vu = nv.ma_chuc_vu
+        he_so = Decimal(chuc_vu.he_so_luong)
+        phu_cap = Decimal(chuc_vu.phu_cap or 0)
+
+        # 4. Tính lương
+        luong = luong_co_ban * he_so + phu_cap
+
+        return luong
+
+    @staticmethod
+    def tinh_luong_tat_ca():
+        tham_so = ThamSoLuongRepository.get_luong_co_ban_hien_tai()
+        luong_co_ban = Decimal(tham_so.gia_tri_so)
+
+        nhan_viens = NhanVien.objects.select_related('ma_chuc_vu')
+
+        result = []
+        for nv in nhan_viens:
+            luong = (
+                    luong_co_ban * Decimal(nv.ma_chuc_vu.he_so_luong)
+                    + Decimal(nv.ma_chuc_vu.phu_cap or 0)
+            )
+            result.append({
+                "ma_nv": nv.ma_nv,
+                "ho_ten": nv.ho_ten,
+                "chuc_vu": nv.ma_chuc_vu.ten_chuc_vu,
+                "luong": luong
+            })
+
+        return result
