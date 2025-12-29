@@ -10,6 +10,11 @@ from QuanLyHangHoa.models.hang_hoa import HangHoa
 # DonViTinh Serializer
 # =========================
 class DonViTinhSerializer(serializers.ModelSerializer):
+    """
+    Serializer dùng để chuyển đổi dữ liệu Đơn Vị Tính
+    giữa Model và JSON trong API.
+    """
+
     class Meta:
         model = DonViTinh
         fields = ["ma_dvt", "ten_dvt"]
@@ -19,6 +24,11 @@ class DonViTinhSerializer(serializers.ModelSerializer):
 # LoaiHang Serializer
 # =========================
 class LoaiHangSerializer(serializers.ModelSerializer):
+    """
+    Serializer dùng để chuyển đổi dữ liệu Loại Hàng
+    giữa Model và JSON trong API.
+    """
+
     class Meta:
         model = LoaiHang
         fields = ["ma_loai", "ten_loai", "mo_ta"]
@@ -28,6 +38,11 @@ class LoaiHangSerializer(serializers.ModelSerializer):
 # ThuongHieu Serializer
 # =========================
 class ThuongHieuSerializer(serializers.ModelSerializer):
+    """
+    Serializer dùng để chuyển đổi dữ liệu Thương Hiệu
+    giữa Model và JSON trong API.
+    """
+
     class Meta:
         model = ThuongHieu
         fields = ["ma_thuong_hieu", "ten_thuong_hieu", "quoc_gia", "mo_ta"]
@@ -37,6 +52,14 @@ class ThuongHieuSerializer(serializers.ModelSerializer):
 # HangHoa Serializer (LỒNG OBJECT)
 # =========================
 class HangHoaSerializer(serializers.ModelSerializer):
+    """
+    Serializer dùng cho Hàng Hóa.
+
+    - READ: Trả về thông tin hàng hóa kèm object lồng
+      (đơn vị tính, loại hàng, thương hiệu).
+    - WRITE: Nhận khóa ngoại dưới dạng ID.
+    """
+
     # =====================
     # READ: object lồng
     # =====================
